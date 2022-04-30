@@ -1,0 +1,178 @@
+﻿@model TrackBug.Models.ViewModels.TicketVM
+@{
+    ViewData["Title"] = String.Format("{0} Details Page", Model.Ticket.Title);
+}
+</br>
+<h4> Ticket's Details Page</h4>
+<hr />
+<div class="row">
+    <div class="col-md-5">
+        @* For Ticket Details*@
+        <div class="card text-white bg-secondary">
+            <h4 class="card-header"><strong>Title:</strong> @Model.Ticket.Title</h4>
+            <div class="card-body">
+                <h4 class="card-title"><strong>Description:</strong></h4>
+                <p class="card-text">@Model.Ticket.Description</p>
+                <h4 class="card-title"><strong>Created Date-Time:</strong></h4>
+                <p class="card-text">@Model.Ticket.CreatedDateTimeAsString</p>
+                <h4 class="card-title text-danger"><strong>Due Date-Time:</strong></h4>
+                <p class="card-text text-danger">@Model.Ticket.DueDateTimeAsString</p>
+                <h4 class="card-title"><strong>Created By:</strong></h4>
+                <p class="card-text">@Model.Ticket.ApplicationUser.Name (@Model.Ticket.ApplicationUser.Email) (add link to person's profile page?)</p>
+                <h4 class="card-title"><strong>Priority:</strong></h4>
+                <p class="card-text">@Model.Ticket.Priority.Title</p>
+                <h4 class="card-title"><strong>Status:</strong></h4>
+                <p class="card-text">@Model.Ticket.Status.Title</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-7 pt-4">
+        @* For Ticket Members area managemnt*@
+        <div class="container p-3">
+            <div class="row pt-4">
+                <div class="col-6">
+                    <h2 class="text-primary">Ticket's Members Area</h2>
+                </div>
+                <div class="col-6 text-end">
+                    <a class="btn btn-primary" asp-area="Employee" asp-controller="Ticket" asp-action="AddMember" asp-route-ticketId="@Model.Ticket.Id"><i class="bi bi-plus-circle"></i> &nbsp; Add Member</a>
+
+                </div>
+                <br />
+                <table class="table table-bordered table-striped" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>
+                                @Html.DisplayNameFor(model => model.TicketMembers.FirstOrDefault().ApplicationUser.Name)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.TicketMembers.FirstOrDefault().ApplicationUser.Email)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.TicketMembers.FirstOrDefault().ApplicationUser.EmployeeType.Title)
+                            </th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.TicketMembers)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ApplicationUser.Name)
+                                    @*<a asp-area="Employee" asp-controller="ProjectMember" asp-action="Details" asp-route-id="@item.Id" asp-route-projectId="@Model.Project.Id" >@Html.DisplayFor(modelItem => item.ApplicationUser.Name)</a>*@
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ApplicationUser.Email)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ApplicationUser.EmployeeType.Title)
+                                </td>
+                                <td class="text-end">
+                                    <a onclick="ConfirmDeleteTicketMember(@item.Id)"
+                                       class="btn btn-danger mx-2 text-light"> <i class="bi bi-trash-fill"></i> Delete</a>
+                                </td>
+                                @*Modal pop for Project Member deletion*@
+                                <div class="modal fade" id="ticketMemberDeleteModal">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+
+                                                <h3 class="modal-title">Delete Project Member:</h3>
+                                                <a class="close" onclick="CancelDelete()" data-dismiss="modal">&times;</a>
+                                            </div>
+                                            <div class="modal-body">
+                                                <h4>Are you sure you want to delete member from the project?</h4>
+                                                <input type="hidden" id="hiddenTicketMemberIdField" />
+                                            </div>
+                                            <div class="modal-footer">
+                                                <a href="#" class="btn btn-default" onclick="CancelDelete()" data-dismiss="modal">Cancel</a>
+                                                <a href="#" class="btn btn-danger" onclick="DeleteTicketMember()">Confirm</a>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+@section scripts{
+    <script>
+        var ConfirmDeleteTicketMember = function (id) {
+
+            $("#hiddenTicketMemberIdField").val(id);
+            $("#ticketMemberDeleteModal").modal('show');
+
+        }
+
+        var DeleteTicketMember = function () {
+
+
+
+            var ticketMemberId = $("#hiddenTicketMemberIdField").val();
+
+            $.ajax({
+
+                type: 'DELETE',
+                url: "/Employee/TicketMember/Delete/",
+                data: { id: ticketMemberId },
+                success: function (data) {
+                    if (data.success) {
+                        toastr.success(data.message);
+                        $("#ticketMemberDeleteModal").modal("hide");
+                        document.location.reload(true);
+                    }
+                    else {
+                        toastr.error(data.message);
+                        $("#ticketMemberDeleteModal").modal("hide");
+                    }
+                }
+
+
+            })
+
+        }
+        var CancelDelete = function () {
+            $("#ticketMemberDeleteModal").modal("hide");
+            //$("#projectDeleteModal").modal("hide");
+
+        }
+        @*var ConfirmDeleteProject = function (id) {
+            $("#hiddenProjectIdField").val(id);
+            $("#projectDeleteModal").modal('show');
+        }
+        var DeleteProject = function () {
+            var projectId = $("#hiddenProjectIdField").val();
+
+            $.ajax({
+
+                type: 'DELETE',
+                url: "/Employee/Project/Delete/",
+                data: { id: projectId },
+                success: function (data) {
+                    if (data.success) {
+                        toastr.success(data.message);
+                        $("#projectDeleteModal").modal("hide");
+                        location.replace('/Employee/Project/Index');
+                    }
+                    else {
+                        toastr.error(data.message);
+                        $("#projectMemberDeleteModal").modal("hide");
+                    }
+                }
+
+
+            })
+
+        }*@
+    </script>
+
+}

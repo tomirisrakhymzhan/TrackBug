@@ -42,8 +42,8 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        @*@if (User.IsInRole("Admin"))
-                            {*@
+                        @if (User.IsInRole("Admin"))
+                            {
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Admin area</a>
                             <div class="dropdown-menu">
@@ -53,11 +53,11 @@
 
                             </div>
                         </li>
-                        @*}*@
+                        }
 
-                        @*<li class="nav-item">
+                        <li class="nav-item">
                                 <a class="nav-link" asp-area="Employee" asp-controller="Project" asp-action="Index">My Projects</a>
-                            </li>*@
+                            </li>
 
                     </ul>
                     <partial name="_LoginPartial" />
@@ -75,7 +75,7 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="footer text-muted">
         <div class="container">
             &copy; 2022 - TrackBug - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>

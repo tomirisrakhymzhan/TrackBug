@@ -1,0 +1,84 @@
+﻿@model TrackBug.Models.ViewModels.TicketUpsertVM
+
+@{
+    ViewData["Title"] = "Upsert";
+}
+<h1>@(Model.Ticket.Id!=0?"Update":"Create") Ticket</h1>
+</br>
+<hr />
+<div class="row">
+    <div class="col-md-9">
+        <form asp-action="Upsert" enctype="multipart/form-data">
+            @*<div asp-validation-summary="ModelOnly" class="text-danger"></div>*@
+            <input type="hidden" asp-for="@Model.Ticket.Id" />
+            <input type="hidden" asp-for="@Model.Ticket.ProjectId" />
+            <input type="hidden" name="returnUrl" value="@ViewBag.returnUrl" />
+            <div class="form-group">
+                <label asp-for="Ticket.Title" class="control-label"></label>
+                <input asp-for="Ticket.Title" class="form-control" />
+                <span asp-validation-for="Ticket.Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Ticket.Description" class="control-label"></label>
+                <textarea rows="3" asp-for="Ticket.Description" class="form-control"></textarea>
+                <span asp-validation-for="Ticket.Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Ticket.PriorityID" class="control-label"></label>
+                <select asp-for="Ticket.PriorityID" asp-items="@Model.PriorityList" class="form-select">
+                    <option disabled selected>--Select Priority--</option>
+                </select>
+                <span asp-validation-for="Ticket.PriorityID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Ticket.StatusID" class="control-label"></label>
+                <select asp-for="Ticket.StatusID" asp-items="@Model.StatusList" class="form-select">
+                    <option disabled selected>--Select Status--</option>
+                </select>
+                <span asp-validation-for="Ticket.StatusID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <div class="row">
+                    <label asp-for="Ticket.DueDateTime" class="control-label"></label>
+                    <div class="col-md-8">
+                        @if (Model.Ticket.DueDateTime != DateTime.MinValue)//i.e if due date was not previously set
+                        {
+                            <input type="datetime-local" asp-for="Ticket.DueDateTime"
+                                   value="@Model.Ticket.DueDateTime.ToString("yyyy-MM-dd HH:mm:ss").Replace(' ','T')"
+                                   min="@Model.Ticket.CreatedDateTime.ToString("yyyy-MM-dd HH:mm:ss").Replace(' ','T')"
+                                   />
+                        }
+                        else
+                        {
+                            <input type="datetime-local" asp-for="Ticket.DueDateTime"
+                                   value="@Model.Ticket.CreatedDateTime.ToString("yyyy-MM-dd HH:mm:ss").Replace(' ','T')"
+                                   min="@Model.Ticket.CreatedDateTime.ToString("yyyy-MM-dd HH:mm:ss").Replace(' ','T')"
+                                   />
+                        }
+
+                    </div>
+                    <span asp-validation-for="Ticket.DueDateTime" class="text-danger"></span>
+                </div>
+            </div>
+            </br>
+            <div class="form-group">
+                @if (Model.Ticket.Id != 0)
+                {
+                    <button type="submit" class="btn btn-primary">Update</button> }
+                else
+                {
+                    <button type="submit" class="btn btn-primary" style="width:150px">Create</button>}
+            </div>
+        </form>
+    </div>
+</div>
+</br>
+<div>
+    <a asp-area="Employee" asp-controller="Project" asp-action="Details" class="btn btn-primary form-control" asp-route-projectId="@Model.Ticket.ProjectId">
+        Back to Project Details
+    </a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

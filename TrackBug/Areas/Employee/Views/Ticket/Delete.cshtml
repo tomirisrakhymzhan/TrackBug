@@ -1,0 +1,43 @@
+﻿@model TrackBug.Models.Ticket
+
+@{
+    ViewData["Title"] = "Ticket Delete";
+}
+
+<h1>Ticket Delete</h1>
+
+<h3>Are you sure you want to delete this ticket?</h3>
+<div>
+    <div class="card text-white bg-secondary">
+        <h4 class="card-header"><strong>Title:</strong> @Model.Title</h4>
+        <div class="card-body">
+            <h4 class="card-title"><strong>Description:</strong></h4>
+            <p class="card-text">@Model.Description</p>
+            <h4 class="card-title"><strong>Created Date-Time:</strong></h4>
+            <p class="card-text">@Model.CreatedDateTimeAsString</p>
+            <h4 class="card-title"><strong>Due Date-Time:</strong></h4>
+            <p class="card-text">@Model.DueDateTimeAsString</p>
+            <h4 class="card-title"><strong>Priority:</strong></h4>
+            <p class="card-text">@Model.Priority.Title</p>
+            <h4 class="card-title"><strong>Status:</strong></h4>
+            <p class="card-text">@Model.Status.Title</p>
+            <h4 class="card-title"><strong>Created By:</strong></h4>
+            <p class="card-text">@Model.ApplicationUser.Name (@Model.ApplicationUser.Email) (add link to person's profile page?)</p>
+            <h4 class="card-title"><strong>Ticket is part of Project:</strong></h4>
+            <a asp-area="Employee" asp-controller="Project" asp-action="Details" asp-route-projectId="@Model.Project.Id" class="card-text">@Model.Project.Title.</a>
+
+        </div>
+    </div>
+    </br>
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="@Model.Project.Id" />
+        <input type="hidden" name="returnUrl" value="@ViewBag.returnUrl" />
+
+        <input type="submit" value="Delete" class="btn btn-danger" />
+        </br>
+        <a asp-area="Employee" asp-controller="Project" asp-action="Details" class="btn btn-primary form-control" asp-route-projectId="@Model.Project.Id">
+            Back to Project Details
+        </a>
+    </form>
+</div>
