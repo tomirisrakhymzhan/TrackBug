@@ -10,7 +10,10 @@ namespace TrackBug.Models
         [Key]
         public int Id { get; set; }
         [Required]
+        [MaxLength(30)]
         public string Title { get; set; }
+        [MaxLength(30)]
+        public string ShortDescription { get; set; }
         [Required]
         public string Description { get; set; }
         [Display(Name = "Created Date-Time")]

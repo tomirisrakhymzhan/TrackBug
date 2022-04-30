@@ -45,15 +45,13 @@
                         {
                             <input type="datetime-local" asp-for="Ticket.DueDateTime"
                                    value="@Model.Ticket.DueDateTime.ToString("yyyy-MM-dd HH:mm:ss").Replace(' ','T')"
-                                   min="@Model.Ticket.CreatedDateTime.ToString("yyyy-MM-dd HH:mm:ss").Replace(' ','T')"
-                                   />
+                                   min="@Model.Ticket.CreatedDateTime.ToString("yyyy-MM-dd HH:mm:ss").Replace(' ','T')" />
                         }
                         else
                         {
                             <input type="datetime-local" asp-for="Ticket.DueDateTime"
                                    value="@Model.Ticket.CreatedDateTime.ToString("yyyy-MM-dd HH:mm:ss").Replace(' ','T')"
-                                   min="@Model.Ticket.CreatedDateTime.ToString("yyyy-MM-dd HH:mm:ss").Replace(' ','T')"
-                                   />
+                                   min="@Model.Ticket.CreatedDateTime.ToString("yyyy-MM-dd HH:mm:ss").Replace(' ','T')" />
                         }
 
                     </div>
@@ -74,11 +72,29 @@
 </div>
 </br>
 <div>
-    <a asp-area="Employee" asp-controller="Project" asp-action="Details" class="btn btn-primary form-control" asp-route-projectId="@Model.Ticket.ProjectId">
+    <a asp-area="Employee" asp-controller="Project" asp-action="Details" asp-route-id="@Model.Ticket.ProjectId">
         Back to Project Details
     </a>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>tinymce.init({
+           selector: 'textarea',
+           width: 600,
+           height: 300,
+           plugins: [
+               'advlist', 'autolink', 'link', 'image', 'lists', 'charmap', 'preview', 'anchor', 'pagebreak',
+               'searchreplace', 'wordcount', 'visualblocks', 'visualchars', 'code', 'fullscreen', 'insertdatetime',
+               'media', 'table', 'emoticons', 'template', 'help'
+           ],
+           toolbar: 'undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | ' +
+               'bullist numlist outdent indent | link image | print preview media fullscreen | ' +
+               'forecolor backcolor emoticons | help',
+           menu: {
+               favs: { title: 'My Favorites', items: 'code visualaid | searchreplace | emoticons' }
+           },
+           menubar: 'favs file edit view format tools',
+           content_css: 'css/content.css'
+       });</script>
 }

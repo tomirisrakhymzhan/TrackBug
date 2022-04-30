@@ -1,13 +1,12 @@
 ﻿@model TrackBug.Models.ViewModels.ProjectMemberAddVM
-
-<div class="modal-dialog">
-    <div class="modal-content">
-        <div class="modal-header">
-
-            <h3 class="modal-title">Add member to the project <strong>@Model.Project.Title</strong></h3>
-            <a class="close" onclick="CancelDelete()" data-dismiss="modal">&times;</a>
-        </div>
-        <div class="modal-body">
+@{
+    ViewData["Title"] = "Add  Project Member";
+}
+<h1>Add  Project Member</h1>
+</br>
+<div class="row">
+    <div class="col-md-9">
+         <h3 class="modal-title">Add member to the project <strong>@Model.Project.Title</strong></h3>
             <form asp-action="AddMember">
                 <input type="hidden" asp-for="@Model.ProjectMember.ProjectId" />
                 <input type="hidden" name="returnUrl" value="@Model.returnUrl" />
@@ -22,11 +21,10 @@
                     <button type="submit" class="btn btn-primary" style="width:150px">Add</button>
                 </div>
             </form>
-        </div>
-        <div class="modal-footer">
-            <a href="#" class="btn btn-default" onclick="CancelDelete()" data-dismiss="modal">Cancel</a>
-        </div>
-
     </div>
-
+</div>
+<div>
+    <a asp-area="Employee" asp-controller="Project" asp-action="Details" asp-route-projectId="@Model.ProjectMember.ProjectId">
+        Back to Project Details
+    </a>
 </div>

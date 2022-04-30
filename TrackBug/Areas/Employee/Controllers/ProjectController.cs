@@ -8,8 +8,7 @@ using TrackBug.Models;
 using TrackBug.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-
-// For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using TrackBug.Utilities;
 
 namespace TrackBug.Areas.Employee.Controllers
 {
@@ -33,17 +32,26 @@ namespace TrackBug.Areas.Employee.Controllers
             return View(curUserProjectList);
         }
 
-        public IActionResult Create(int? id)
+        public IActionResult Upsert(int? id)
         {
             Project project = new();
-            return View(project);
+            ViewBag.returnUrl = Request.Headers["Referer"].ToString();//save return url to redirect to after upserting is finished
 
+            if (id == null || id == 0)//create new project
+            {
+                return View(project);
+            }
+            else // update ticket
+            {
+                project = _unitOfWork.Project.GetFirstOrDefault(u => u.Id == id);
+                return View(project);
+            }
         }
 
         //POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Project obj)
+        public async Task<IActionResult> Upsert(Project obj, string returnUrl)
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
@@ -51,10 +59,11 @@ namespace TrackBug.Areas.Employee.Controllers
             if (ModelState.IsValid)
             {
                 obj.ApplicationUserId = claim.Value;
+                obj.Description = HtmlUtilities.HtmlToPlainText(obj.Description);
                 _unitOfWork.Project.Update(obj);
                 await _unitOfWork.SaveAsync();
                 TempData["success"] = "Project created successfully";
-                return RedirectToAction(nameof(Index));
+                return Redirect(returnUrl);
             }
             return View(obj);
         }
@@ -74,6 +83,7 @@ namespace TrackBug.Areas.Employee.Controllers
             {
                 ticket.CreatedDateTimeAsString = ticket.CreatedDateTime.ToString("ddd, dd MMM yyyy, HH:mm tt");
                 ticket.DueDateTimeAsString = ticket.DueDateTime.ToString("ddd, dd MMM yyyy, HH:mm tt");
+                ticket.ApplicationUser = _unitOfWork.ApplicationUser.GetFirstOrDefault(u => u.Id == ticket.ApplicationUser.Id, includeProperties: "EmployeeType");
             }
             foreach (var member in projectVM.ProjectMembers)
             {

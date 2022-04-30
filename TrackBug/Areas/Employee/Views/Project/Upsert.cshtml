@@ -1,0 +1,63 @@
+﻿@model TrackBug.Models.Project
+
+@{
+    ViewData["Title"] = "Create";
+}
+<h1>@(Model.Id!=0?"Update":"Create") Project</h1>
+</br>
+<hr />
+<div class="row">
+    <div class="col-md-9">
+        <form asp-action="Upsert" enctype="multipart/form-data">
+            @*<div asp-validation-summary="ModelOnly" class="text-danger"></div>*@
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" name="returnUrl" value="@ViewBag.returnUrl" />
+            <div class="form-group">
+                <label asp-for="Title" class="control-label"></label>
+                <input asp-for="Title" class="form-control" />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <textarea rows="3" asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                @if (Model.Id != 0)
+                {
+                    <button type="submit" class="btn btn-primary">Update</button> }
+                else
+                {
+                    <button type="submit" class="btn btn-primary" style="width:150px">Create</button>}
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-area="Employee" asp-controller="Project" asp-action="Index">Back to Project List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+   <script>
+       tinymce.init({
+           selector: 'textarea',
+           width: 600,
+           height: 300,
+           plugins: [
+               'advlist', 'autolink', 'link', 'image', 'lists', 'charmap', 'preview', 'anchor', 'pagebreak',
+               'searchreplace', 'wordcount', 'visualblocks', 'visualchars', 'code', 'fullscreen', 'insertdatetime',
+               'media', 'table', 'emoticons', 'template', 'help'
+           ],
+           toolbar: 'undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | ' +
+               'bullist numlist outdent indent | link image | print preview media fullscreen | ' +
+               'forecolor backcolor emoticons | help',
+           menu: {
+               favs: { title: 'My Favorites', items: 'code visualaid | searchreplace | emoticons' }
+           },
+           menubar: 'favs file edit view format tools',
+           content_css: 'css/content.css'
+       });
+   </script> 
+}
