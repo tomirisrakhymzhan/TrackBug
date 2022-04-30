@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace TrackBug.Areas.Admin.Controllers
 {
-    //[Area("Admin")]
+    [Area("Admin")]
     //[Authorize(Roles = "Admin")]
     public class PriorityController : Controller
     {

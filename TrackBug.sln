@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackBug.Models", "TrackBug
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackBug.DataAccess", "TrackBug.DataAccess\TrackBug.DataAccess.csproj", "{91A0219E-340D-4D82-84FB-97E78F785FF3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrackBug.Utilities", "TrackBug.Utilities\TrackBug.Utilities.csproj", "{9AFBECAE-3947-4A3D-BF02-4DE97F1C6A44}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{91A0219E-340D-4D82-84FB-97E78F785FF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{91A0219E-340D-4D82-84FB-97E78F785FF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{91A0219E-340D-4D82-84FB-97E78F785FF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AFBECAE-3947-4A3D-BF02-4DE97F1C6A44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AFBECAE-3947-4A3D-BF02-4DE97F1C6A44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AFBECAE-3947-4A3D-BF02-4DE97F1C6A44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AFBECAE-3947-4A3D-BF02-4DE97F1C6A44}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

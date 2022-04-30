@@ -9,6 +9,7 @@ using TrackBug.Models;
 
 namespace TrackBug.Controllers
 {
+    [Area("Employee")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
