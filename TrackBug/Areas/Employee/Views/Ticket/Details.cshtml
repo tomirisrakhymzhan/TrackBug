@@ -2,6 +2,67 @@
 @{
     ViewData["Title"] = String.Format("{0} Details Page", Model.Ticket.Title);
 }
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb p-3 bg-secondary">
+        <li class="breadcrumb-item">
+            <a asp-area="Employee" asp-controller="Project" asp-action="Index">My Projects</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a asp-area="Employee" asp-controller="Project" asp-action="Details" asp-route-id="@Model.Ticket.ProjectId">@Model.Ticket.Project.Title</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">@Model.Ticket.Title</li>
+    </ol>
+</nav>
+<hr />
+<div class="row justify-content-between">
+    <div class="col-12 col-lg-7">
+        <h5 class="mb-4">Ticket Overview</h5>
+
+        <article>
+            @Model.Ticket.Description
+        </article>
+    </div>
+    <div class="col-12 col-md-4">
+        <div class="card">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item bg-light">
+                    <div class="d-flex justify-content-between">
+                        <div class="text-dark"><i class="icon-text-document mr-1"></i> Created by</div>
+                        <p class="card-text text-dark">@Model.Ticket.ApplicationUser.UserName</p>
+                    </div>
+                </li>
+                <li class="list-group-item bg-light">
+                    <div class="d-flex justify-content-between">
+                        <div class="text-dark"><i class="icon-text-document mr-1"></i> Created date</div>
+                        <p class="card-text text-dark">@Model.Ticket.CreatedDateTimeAsString</p>
+                    </div>
+                </li>
+                <li class="list-group-item bg-light">
+                    <div class="d-flex justify-content-between">
+                        <div class="text-dark"><i class="icon-text-document mr-1"></i> Due date</div>
+                        <p class="card-text text-dark">@Model.Ticket.DueDateTimeAsString</p>
+                    </div>
+                </li>
+                <li class="list-group-item bg-light">
+                    <div class="d-flex justify-content-between">
+                        <div class="text-dark"><i class="icon-text-document mr-1"></i> Priority</div>
+                        <span class="badge @Model.Ticket.Priority.BadgeColor text-uppercase">@Model.Ticket.Priority.Title</span>
+                    </div>
+                </li>
+                <li class="list-group-item bg-light">
+                    <div class="d-flex justify-content-between">
+                        <div class="text-dark"><i class="icon-text-document mr-1"></i> Status</div>
+                        <span class="badge bg-secondary text-uppercase">@Model.Ticket.Status.Title</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+
 </br>
 <h4> Ticket's Details Page</h4>
 <hr />
@@ -34,7 +95,7 @@
                     <h2 class="text-primary">Ticket's Members Area</h2>
                 </div>
                 <div class="col-6 text-end">
-                    <a class="btn btn-primary" asp-area="Employee" asp-controller="Ticket" asp-action="AddMember" asp-route-ticketId="@Model.Ticket.Id"><i class="bi bi-plus-circle"></i> &nbsp; Add Member</a>
+                    <a class="btn btn-primary rounded" asp-area="Employee" asp-controller="Ticket" asp-action="AddMember" asp-route-ticketId="@Model.Ticket.Id"><i class="bi bi-plus-circle"></i> &nbsp; Add Member</a>
 
                 </div>
                 <br />
@@ -56,7 +117,7 @@
                     <tbody>
                         @foreach (var item in Model.TicketMembers)
                         {
-                            <tr>
+                            <tr class="table-secondary">
                                 <td>
                                     @Html.DisplayFor(modelItem => item.ApplicationUser.Name)
                                     @*<a asp-area="Employee" asp-controller="ProjectMember" asp-action="Details" asp-route-id="@item.Id" asp-route-projectId="@Model.Project.Id" >@Html.DisplayFor(modelItem => item.ApplicationUser.Name)</a>*@
@@ -69,7 +130,7 @@
                                 </td>
                                 <td class="text-end">
                                     <a onclick="ConfirmDeleteTicketMember(@item.Id)"
-                                       class="btn btn-danger mx-2 text-light"> <i class="bi bi-trash-fill"></i> Delete</a>
+                                       class="btn btn-danger rounded mx-2 text-light"> <i class="bi bi-trash-fill"></i> Delete</a>
                                 </td>
                                 @*Modal pop for Project Member deletion*@
                                 <div class="modal fade" id="ticketMemberDeleteModal">
@@ -85,8 +146,8 @@
                                                 <input type="hidden" id="hiddenTicketMemberIdField" />
                                             </div>
                                             <div class="modal-footer">
-                                                <a href="#" class="btn btn-default" onclick="CancelDelete()" data-dismiss="modal">Cancel</a>
-                                                <a href="#" class="btn btn-danger" onclick="DeleteTicketMember()">Confirm</a>
+                                                <a href="#" class="btn btn-default rounded" onclick="CancelDelete()" data-dismiss="modal">Cancel</a>
+                                                <a href="#" class="btn btn-danger rounded" onclick="DeleteTicketMember()">Confirm</a>
                                             </div>
 
                                         </div>

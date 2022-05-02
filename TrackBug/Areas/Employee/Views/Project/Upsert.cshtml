@@ -29,10 +29,10 @@
             <div class="form-group">
                 @if (Model.Id != 0)
                 {
-                    <button type="submit" class="btn btn-primary">Update</button> }
+                    <button type="submit" class="btn btn-primary rounded">Update</button> }
                 else
                 {
-                    <button type="submit" class="btn btn-primary" style="width:150px">Create</button>}
+                    <button type="submit" class="btn btn-primary rounded" style="width:150px">Create</button>}
             </div>
         </form>
     </div>
@@ -47,20 +47,18 @@
    <script>
        tinymce.init({
            selector: '#projectDescription',
-           width: 600,
-           height: 300,
+           width: 970,
+           height: 400,
            plugins: [
                'advlist', 'autolink', 'link', 'image', 'lists', 'charmap', 'preview', 'anchor', 'pagebreak',
                'searchreplace', 'wordcount', 'visualblocks', 'visualchars', 'code', 'fullscreen', 'insertdatetime',
                'media', 'table', 'emoticons', 'template', 'help'
            ],
            toolbar: 'undo redo | styles | bold italic | alignleft aligncenter alignright alignjustify | ' +
-               'bullist numlist outdent indent | link image | print preview media fullscreen | ' +
-               'forecolor backcolor emoticons | help',
-           menu: {
-               favs: { title: 'My Favorites', items: 'code visualaid | searchreplace | emoticons' }
-           },
-           menubar: 'favs file edit view format tools',
+               'bullist numlist outdent indent | emoticons | print preview fullscreen | ' +
+               'forecolor backcolor emoticons| help',
+
+           menubar: 'file edit view format tools',
            content_css: 'css/content.css'
        });
        

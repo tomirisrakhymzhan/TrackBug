@@ -28,10 +28,22 @@ namespace TrackBug.Areas.Employee.Controllers
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
-
+            List<ProjectCardVM> userProjectCards = new();
             IEnumerable<Project> curUserProjectList = await _unitOfWork.Project.GetAllAsync(u => u.ApplicationUserId == claim.Value, includeProperties: "ApplicationUser");
-            
-            return View(curUserProjectList);
+            foreach(var project in curUserProjectList)
+            {
+                int numMembers = _unitOfWork.ProjectMember.GetAll(u=>u.ProjectId==project.Id).Count();
+
+                
+                int numOpenTickets = _unitOfWork.Ticket.GetAll(u => u.ProjectId == project.Id && u.Status.Title=="Open").Count();
+                userProjectCards.Add(new()
+                {
+                    Project = project,
+                    NumMembers = numMembers,
+                    NumOpenTickets = numOpenTickets
+                });
+            }
+            return View(userProjectCards);
         }
 
         public IActionResult Upsert(int? id)
@@ -84,29 +96,63 @@ namespace TrackBug.Areas.Employee.Controllers
                     await _unitOfWork.SaveAsync();
                     TempData["success"] = "Project updated successfully";
                 }
-                
-                return Redirect(returnUrl);
+
+                //return Redirect(returnUrl);
+                return RedirectToAction("Details", obj.Id);
             }
             return View(obj);
         }
 
        
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, string searchString, int? ticketPriority, int? ticketStatus)
         {
+            //get tickets of the current project
+            var tickets = _unitOfWork.Ticket.GetAll(u => u.ProjectId == id, includeProperties: "Project,Priority,Status,ApplicationUser");
+            //apply search
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                tickets = tickets.Where(u=>u.Title.Contains(searchString));
+            }
+            //apply priority filter if any
+            if (ticketPriority!=null)
+            {
+                tickets = tickets.Where(u=>u.Priority.Id==ticketPriority);
+            }
+            //apply status filter if any
+            if (ticketStatus!=null)
+            {
+                tickets = tickets.Where(u => u.Status.Id == ticketStatus);
+            }
+
             ProjectVM projectVM = new()
             {
                 Project = await _unitOfWork.Project.GetFirstOrDefaultAsync(u => u.Id == id, includeProperties: "ApplicationUser"),
-                ProjectMembers = await _unitOfWork.ProjectMember.GetAllAsync(u=>u.ProjectId==id, includeProperties: "Project,ApplicationUser"),
-                Tickets = await _unitOfWork.Ticket.GetAllAsync(u=>u.ProjectId==id, includeProperties: "Project,Priority,Status,ApplicationUser")
+                ProjectMembers = await _unitOfWork.ProjectMember.GetAllAsync(u => u.ProjectId == id, includeProperties: "Project,ApplicationUser"),
+                PriorityList = _unitOfWork.Priority.GetAll().Select(i => new SelectListItem
+                {
+                    Text = i.Title,
+                    Value = i.Id.ToString()
+                }),
+                StatusList = _unitOfWork.Status.GetAll().Select(i => new SelectListItem
+                {
+                    Text = i.Title,
+                    Value = i.Id.ToString()
+                }),
+                Tickets = tickets,
+                NumOpenTickets = _unitOfWork.Ticket.GetAll(u => u.ProjectId == id && u.Status.Title == "Open").Count(),
+                NumClosedTickets = _unitOfWork.Ticket.GetAll(u => u.ProjectId == id && u.Status.Title == "Closed").Count(),
+
             };
 
             projectVM.Project.CreatedDateTimeAsString = projectVM.Project.CreatedDateTime.ToString("ddd, dd MMM yyyy, HH:mm tt");
+
             foreach (var ticket in projectVM.Tickets)
             {
                 ticket.CreatedDateTimeAsString = ticket.CreatedDateTime.ToString("ddd, dd MMM yyyy, HH:mm tt");
                 ticket.DueDateTimeAsString = ticket.DueDateTime.ToString("ddd, dd MMM yyyy, HH:mm tt");
                 ticket.ApplicationUser = _unitOfWork.ApplicationUser.GetFirstOrDefault(u => u.Id == ticket.ApplicationUser.Id, includeProperties: "EmployeeType");
             }
+
             foreach (var member in projectVM.ProjectMembers)
             {
                 member.ApplicationUser = _unitOfWork.ApplicationUser.GetFirstOrDefault(u => u.Id == member.ApplicationUserId, includeProperties: "EmployeeType");

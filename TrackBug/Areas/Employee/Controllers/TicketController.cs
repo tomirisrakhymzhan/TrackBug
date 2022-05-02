@@ -9,6 +9,7 @@ using TrackBug.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authorization;
+using TrackBug.Utilities;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -84,11 +85,11 @@ namespace TrackBug.Areas.Employee.Controllers
                 if (obj.Ticket.Id == 0)
                 {
                     obj.Ticket.ApplicationUserId = claim.Value;
-
-                    var project = _unitOfWork.Project.GetFirstOrDefault(u => u.Id == obj.Ticket.ProjectId);
-                    project.NumOfTickets++;
-                    _unitOfWork.Project.Update(project);
-                    await _unitOfWork.SaveAsync();
+                    obj.Ticket.Description = HtmlUtilities.HtmlToPlainText(obj.Ticket.Description);
+                    //var project = _unitOfWork.Project.GetFirstOrDefault(u => u.Id == obj.Ticket.ProjectId);
+                    //project.NumOfTickets++;
+                    //_unitOfWork.Project.Update(project);
+                    //await _unitOfWork.SaveAsync();
 
                     _unitOfWork.Ticket.Add(obj.Ticket);
                     await _unitOfWork.SaveAsync();
@@ -97,14 +98,10 @@ namespace TrackBug.Areas.Employee.Controllers
                 else
                 {
                     obj.Ticket.ApplicationUserId = claim.Value;
-                    var project = _unitOfWork.Project.GetFirstOrDefault(u => u.Id == obj.Ticket.ProjectId);
-                    var statusTitle = _unitOfWork.Status.GetFirstOrDefault(u => u.Id == obj.Ticket.StatusID).Title;
-                    if (statusTitle=="Closed")
-                    {
-                        project.NumOfClosedTickets++;
-                    }
-                    _unitOfWork.Project.Update(project);
-                    await _unitOfWork.SaveAsync();
+                    obj.Ticket.Description = HtmlUtilities.HtmlToPlainText(obj.Ticket.Description);
+                    //var project = _unitOfWork.Project.GetFirstOrDefault(u => u.Id == obj.Ticket.ProjectId);
+                    //var statusTitle = _unitOfWork.Status.GetFirstOrDefault(u => u.Id == obj.Ticket.StatusID).Title;
+                    
 
                     _unitOfWork.Ticket.Update(obj.Ticket);
                     await _unitOfWork.SaveAsync();
@@ -137,11 +134,11 @@ namespace TrackBug.Areas.Employee.Controllers
         // POST: Ticket/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id, int projectId, string returnUrl)
+        public async Task<IActionResult> DeleteConfirmed(int id, string returnUrl)
         {
             var ticket = await _unitOfWork.Ticket
-                .GetFirstOrDefaultAsync(u => u.Id == id && u.ProjectId == projectId, includeProperties: "Project");
-            ticket.Project.NumOfTickets--;
+                .GetFirstOrDefaultAsync(u => u.Id == id);
+            //ticket.Project.NumOfTickets--;
             _unitOfWork.Ticket.Remove(ticket);
             await _unitOfWork.SaveAsync();
             TempData["success"] = "Ticket deleted successfully";

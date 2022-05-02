@@ -22,9 +22,9 @@
             <h4 class="card-title"><strong>Status:</strong></h4>
             <p class="card-text">@Model.Status.Title</p>
             <h4 class="card-title"><strong>Created By:</strong></h4>
-            <p class="card-text">@Model.ApplicationUser.Name (@Model.ApplicationUser.Email) (add link to person's profile page?)</p>
+            <p class="card-text">@Model.ApplicationUser.UserName</p>
             <h4 class="card-title"><strong>Ticket is part of Project:</strong></h4>
-            <a asp-area="Employee" asp-controller="Project" asp-action="Details" asp-route-projectId="@Model.Project.Id" class="card-text">@Model.Project.Title.</a>
+            <a asp-area="Employee" asp-controller="Project" asp-action="Details" class="card-text text-light">@Model.Project.Title.</a>
 
         </div>
     </div>
@@ -33,7 +33,7 @@
         <input type="hidden" asp-for="@Model.Project.Id" />
         <input type="hidden" name="returnUrl" value="@ViewBag.returnUrl" />
 
-        <input type="submit" value="Delete" class="btn btn-danger mt-2" />
+        <input type="submit" value="Delete" class="btn btn-danger rounded mt-2" />
         <br/>
         <a asp-area="Employee" asp-controller="Project" asp-action="Details" asp-route-id="@Model.ProjectId">
             Back to Project Details

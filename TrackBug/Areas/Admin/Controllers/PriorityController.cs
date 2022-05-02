@@ -7,6 +7,7 @@ using TrackBug.DataAccess;
 using TrackBug.Models;
 using TrackBug.DataAccess.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
+using TrackBug.Models.ViewModels;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -33,8 +34,6 @@ namespace TrackBug.Areas.Admin.Controllers
         public IActionResult Upsert(int? id)
         {
             Priority priority = new();
-
-
             if (id == null || id == 0)
             {
                 return View(priority);

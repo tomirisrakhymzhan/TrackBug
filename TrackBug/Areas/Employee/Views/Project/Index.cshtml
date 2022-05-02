@@ -1,4 +1,4 @@
-﻿@model IEnumerable<TrackBug.Models.Project>
+﻿@model IEnumerable<TrackBug.Models.ViewModels.ProjectCardVM>
 @{
     ViewData["Title"] = "My Projects";
     
@@ -18,24 +18,23 @@
     <hr />
 
     <div class="row pb-3">
-        @foreach (var product in Model)
+        @foreach (var projectCard in Model)
         {
-            var openTickets = product.NumOfTickets - product.NumOfClosedTickets;
 
             <div class="col-lg-3 col-md-6">
                 <div class="row p-2">
-                    <div class="col-12 p-1" style="border:1px solid #008cba; border-radius: 5px;">
+                    <div class="col-12 p-2" >
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">@product.Title</h5>
-                                @if (product.ShortDescription == null)
+                                <h5 class="card-title">@projectCard.Project.Title</h5>
+                                @if (projectCard.Project.ShortDescription == null)
                                 {
                                     <br />
                                 }
-                                <p class="card-text">@product.ShortDescription</p>
-                                <h6 class="card-subtitle mb-2 text-muted">Members: <span class="badge bg-secondary">5</span></h6>
-                                <h6 class="card-subtitle mb-2 text-muted">Open tickets: <span class="badge bg-secondary">@openTickets</span></h6>
-                                <a asp-area="Employee" asp-controller="Project" asp-action="Details" class="btn btn-primary form-control" asp-route-id="@product.Id" asp-route-productId="@product.Id">
+                                <p class="card-text">@projectCard.Project.ShortDescription</p>
+                                <h6 class="card-subtitle mb-2 text-muted">Members: <span class="badge bg-secondary">@projectCard.NumMembers</span></h6>
+                                <h6 class="card-subtitle mb-2 text-muted">Open tickets: <span class="badge bg-secondary">@projectCard.NumOpenTickets</span></h6>
+                                <a asp-area="Employee" asp-controller="Project" asp-action="Details" class="btn btn-primary rounded form-control" asp-route-id="@projectCard.Project.Id">
                                     Details
                                 </a>
                             </div>

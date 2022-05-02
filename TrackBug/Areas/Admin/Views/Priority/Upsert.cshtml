@@ -11,10 +11,23 @@
                     <hr />
                 </div>
                 @*<div asp-validation-summary="All"></div>*@
-                <div class="mb-3">
+                <div class="form-group">
                     <label asp-for="Title"></label>
                     <input asp-for="Title" class="form-control" />
                     <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="BadgeColor"></label>
+                    <select asp-for="BadgeColor" class="form-control" id="selectColor">
+                        <option disabled selected>--Select Color--</option>
+                        <option id="#0275d8" value="badge-primary">Primary</option>
+                        <option id="#5cb85c" value="badge-success">Green</option>
+                        <option id="#f0ad4e" value="badge-warning">Yellow</option>
+                        <option id="#d9534f" value="badge-danger">Red</option>
+                        <option id="#5bc0de" value="badge-info">Light Blue</option>
+
+                    </select>
+                    <span asp-validation-for="BadgeColor" class="text-danger"></span>
                 </div>
                 <div class="col-12">
                     @if (Model.Id != 0)
@@ -40,4 +53,20 @@
     @{
         <partial name="_ValidationScriptsPartial" />
     }
+    <script>
+        $(document).ready(function () {
+            setColor();
+            $('#selectColor').change(function () {
+                setColor();
+            });
+        });
+
+        function setColor() {
+            var color = $('#selectColor').find('option:selected').attr('id');
+            console.log(color);
+            $('#selectColor').css('background', color);
+        }
+
+
+    </script>
 }

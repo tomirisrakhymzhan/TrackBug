@@ -10,7 +10,8 @@ namespace TrackBug.Models
         public int Id { get; set; }
         [Required]
         public string Title { get; set; }
-        [NotMapped]
+        [Required]
+        [Display(Name = "Assosiated color")]
         public string BadgeColor { get; set; }
     }
 }

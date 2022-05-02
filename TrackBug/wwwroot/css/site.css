@@ -16,6 +16,19 @@ a.navbar-brand {
   border-color: #1861ac;
 }
 
+
+/* Selectlist item styles
+-------------------------------------------------- */
+/*.select-item-primary {
+    color: #0275d8
+}*/
+/*.select-item-secondary {
+    color: #0275d8
+}*/
+/*.select-item-success {
+    color: #5cb85c
+}*/
+
 /* Sticky footer styles
 -------------------------------------------------- */
 /*html {
