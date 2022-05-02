@@ -2,18 +2,25 @@
 @{
     ViewData["Title"] = String.Format("{0} Details Page", Model.Project.Title);
 }
-</br>
-<h4> Project's Details Page</h4>
+
+<h1> Project's Details Page</h1>
 
 <hr />
 <div class="row">
     <div class="col-md-5">
         @* For Project Details*@
         <div class="card text-white bg-secondary">
-            <div class="card-header">
-                <h4><strong>Title:</strong> @Model.Project.Title</h4>
+            <div class="d-flex card-header">
+                <h4><strong>Title:</strong> @Model.Project.Title</h4>        
+                <a class="btn btn-primary ml-auto" asp-area="Employee" asp-controller="Project" asp-action="Upsert" asp-route-id="@Model.Project.Id"><i class="bi bi-pen"></i>&nbsp; Edit Details</a>
             </div>
+           
             <div class="card-body">
+                @if (Model.Project.ShortDescription != null)
+                {
+                    <h4 class="card-title"><strong>Short Description:</strong></h4>
+                    <p class="card-text">@Model.Project.ShortDescription</p>
+                }
                 <h4 class="card-title"><strong>Description:</strong></h4>
                 <p class="card-text">@Model.Project.Description</p>
                 <h4 class="card-title"><strong>Created Date-Time:</strong></h4>
@@ -25,9 +32,8 @@
                 <h4 class="card-title"><strong>Num of Closed Tickets:</strong></h4>
                 <p class="card-text">@Model.Project.NumOfClosedTickets</p>
                 @*//maybe add info about other types of tickets*@
-                
-                    <a class="btn btn-primary" asp-area="Employee" asp-controller="Project" asp-action="Upsert" asp-route-id="@Model.Project.Id"><i class="bi bi-pen"></i>&nbsp; Edit Details</a>
-               
+
+
             </div>
         </div>
     </div>
@@ -280,7 +286,6 @@
         <div class="card">
             <h5 class="card-header text-danger">Delete this project</h5>
             <div class="card-body">
-                <
                 <h5 class="card-title">This action is unreversible, once project <strong>@Model.Project.Title</strong> is deleted there is no going back, please be certain.</h5>
                 <a class="btn btn-danger text-light" onclick="ConfirmDeleteProject(@Model.Project.Id)"> <i class="bi bi-x-circle"></i> &nbsp; Delete Project</a>
                 @*Modal pop for Project deletion*@

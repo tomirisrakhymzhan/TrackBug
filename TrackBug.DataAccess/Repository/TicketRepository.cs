@@ -16,6 +16,11 @@ namespace TrackBug.DataAccess.Repository
         public void Update(Ticket obj)
         {
             _db.Tickets.Update(obj);
+            _db.Entry(obj).Property(x => x.CreatedDateTime).IsModified = false;
+
         }
+
+        
+
     }
 }

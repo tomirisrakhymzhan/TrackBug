@@ -50,7 +50,8 @@
                             <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Admin area</a>
                             <div class="dropdown-menu">
                                 <a class="nav-link text-dark" asp-area="Admin" asp-controller="EmployeeType" asp-action="Index">Employee Types</a>
-                                <a class="nav-link text-dark" asp-area="Admin" asp-controller="Priority" asp-action="Index">Priority Types</a>
+                                @*<a class="nav-link text-dark" asp-area="Admin" asp-controller="Priority" asp-action="Index">Priority Types</a>*@
+
                                 <a class="nav-link text-dark" asp-area="Admin" asp-controller="Status" asp-action="Index">Status Types</a>
 
                             </div>
@@ -77,11 +78,11 @@
         </main>
     </div>
 
-    <footer class="footer text-muted">
+    @*<footer class="footer text-muted">
         <div class="container">
             &copy; 2022 - TrackBug - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
-    </footer>
+    </footer>*@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

@@ -8,12 +8,14 @@ using TrackBug.Models;
 using TrackBug.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace TrackBug.Areas.Employee.Controllers
 {
     [Area("Employee")]
+    [Authorize]
     public class TicketMemberController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;

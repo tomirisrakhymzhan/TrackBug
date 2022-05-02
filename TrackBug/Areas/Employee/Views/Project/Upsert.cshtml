@@ -4,7 +4,6 @@
     ViewData["Title"] = "Create";
 }
 <h1>@(Model.Id!=0?"Update":"Create") Project</h1>
-</br>
 <hr />
 <div class="row">
     <div class="col-md-9">
@@ -18,8 +17,13 @@
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="ShortDescription" class="control-label"></label>
+                <input asp-for="ShortDescription" class="form-control" />
+                <span asp-validation-for="ShortDescription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
-                <textarea rows="3" asp-for="Description" class="form-control"></textarea>
+                <textarea id="projectDescription"rows="3" asp-for="Description" class="form-control"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -42,7 +46,7 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
    <script>
        tinymce.init({
-           selector: 'textarea',
+           selector: '#projectDescription',
            width: 600,
            height: 300,
            plugins: [
@@ -59,5 +63,6 @@
            menubar: 'favs file edit view format tools',
            content_css: 'css/content.css'
        });
+       
    </script> 
 }

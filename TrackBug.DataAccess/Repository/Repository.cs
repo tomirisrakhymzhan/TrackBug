@@ -107,7 +107,7 @@ namespace TrackBug.DataAccess.Repository
             IQueryable<T> query = dbSet;
             return query.Except(secondSet);
         }
-
+        
 
     }
 }

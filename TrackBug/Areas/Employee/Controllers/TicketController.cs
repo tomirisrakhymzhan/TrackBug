@@ -8,12 +8,14 @@ using TrackBug.Models;
 using TrackBug.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace TrackBug.Areas.Employee.Controllers
 {
     [Area("Employee")]
+    [Authorize]
     public class TicketController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -91,8 +93,6 @@ namespace TrackBug.Areas.Employee.Controllers
                     _unitOfWork.Ticket.Add(obj.Ticket);
                     await _unitOfWork.SaveAsync();
                     TempData["success"] = "Ticket created successfully";
-                    return Redirect(returnUrl);
-                    //return RedirectToAction("Details", "Project", obj.Ticket.ProjectId);
                 }
                 else
                 {
@@ -109,10 +109,9 @@ namespace TrackBug.Areas.Employee.Controllers
                     _unitOfWork.Ticket.Update(obj.Ticket);
                     await _unitOfWork.SaveAsync();
                     TempData["success"] = "Ticket updated successfully";
-                    return Redirect(returnUrl);
                 }
+                return Redirect(returnUrl);
 
-                
             }
             return View(obj);
         }

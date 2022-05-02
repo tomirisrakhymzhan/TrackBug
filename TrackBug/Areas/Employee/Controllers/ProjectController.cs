@@ -9,10 +9,12 @@ using TrackBug.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TrackBug.Utilities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TrackBug.Areas.Employee.Controllers
 {
     [Area("Employee")]
+    [Authorize]
     public class ProjectController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -28,7 +30,7 @@ namespace TrackBug.Areas.Employee.Controllers
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
 
             IEnumerable<Project> curUserProjectList = await _unitOfWork.Project.GetAllAsync(u => u.ApplicationUserId == claim.Value, includeProperties: "ApplicationUser");
-
+            
             return View(curUserProjectList);
         }
 
@@ -58,11 +60,31 @@ namespace TrackBug.Areas.Employee.Controllers
 
             if (ModelState.IsValid)
             {
-                obj.ApplicationUserId = claim.Value;
-                obj.Description = HtmlUtilities.HtmlToPlainText(obj.Description);
-                _unitOfWork.Project.Update(obj);
-                await _unitOfWork.SaveAsync();
-                TempData["success"] = "Project created successfully";
+                if (obj.Id == 0)//create new project
+                {
+                    obj.ApplicationUserId = claim.Value;
+                    obj.Description = HtmlUtilities.HtmlToPlainText(obj.Description);
+                    _unitOfWork.Project.Add(obj);
+                    await _unitOfWork.SaveAsync();
+                    TempData["success"] = "Project created successfully";
+
+                    ProjectMember projectMember = new()
+                    {
+                        ApplicationUserId = obj.ApplicationUserId,
+                        ProjectId = obj.Id
+                    };
+                    _unitOfWork.ProjectMember.Add(projectMember);
+                    await _unitOfWork.SaveAsync();
+                }
+                else //update existing project
+                {
+                    obj.ApplicationUserId = claim.Value;
+                    obj.Description = HtmlUtilities.HtmlToPlainText(obj.Description);
+                    _unitOfWork.Project.Update(obj);
+                    await _unitOfWork.SaveAsync();
+                    TempData["success"] = "Project updated successfully";
+                }
+                
                 return Redirect(returnUrl);
             }
             return View(obj);

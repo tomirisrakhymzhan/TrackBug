@@ -1,31 +1,40 @@
 ﻿@model IEnumerable<TrackBug.Models.Project>
 @{
     ViewData["Title"] = "My Projects";
+    
 }
-<h1>My Projects</h1>
-</br>
-<hr />
+@*<h1>My Projects</h1>
+<hr />*@
 <div class="container p-3">
     <div class="row pt-4">
         <div class="col-6">
-            <h2 class="text-primary">Projects I created:</h2>
+            <h1 class="text-primary">My Projects:</h1>
         </div>
         <div class="col-6 text-end">
             <a class="btn btn-primary" asp-area="Employee" asp-controller="Project" asp-action="Upsert"><i class="bi bi-plus-circle"></i> &nbsp; Create New Project</a>
-            
+
         </div>
-        <br />
     </div>
+    <hr />
+
     <div class="row pb-3">
         @foreach (var product in Model)
         {
+            var openTickets = product.NumOfTickets - product.NumOfClosedTickets;
+
             <div class="col-lg-3 col-md-6">
                 <div class="row p-2">
                     <div class="col-12 p-1" style="border:1px solid #008cba; border-radius: 5px;">
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">@product.Title</h5>
-                                <p class="card-text">@product.Description</p>
+                                @if (product.ShortDescription == null)
+                                {
+                                    <br />
+                                }
+                                <p class="card-text">@product.ShortDescription</p>
+                                <h6 class="card-subtitle mb-2 text-muted">Members: <span class="badge bg-secondary">5</span></h6>
+                                <h6 class="card-subtitle mb-2 text-muted">Open tickets: <span class="badge bg-secondary">@openTickets</span></h6>
                                 <a asp-area="Employee" asp-controller="Project" asp-action="Details" class="btn btn-primary form-control" asp-route-id="@product.Id" asp-route-productId="@product.Id">
                                     Details
                                 </a>
@@ -34,6 +43,6 @@
                     </div>
                 </div>
             </div>
-         }
+        }
     </div>
 </div>

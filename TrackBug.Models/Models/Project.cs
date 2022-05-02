@@ -29,6 +29,8 @@ namespace TrackBug.Models
 
         public int NumOfTickets { get; set; }
         public int NumOfClosedTickets { get; set; }
+        //public int NumOfOpenTickets { get; set; }
+        //public int NumOfMembers { get; set; }
 
         [NotMapped]
         public string CreatedDateTimeAsString { get; set; }
