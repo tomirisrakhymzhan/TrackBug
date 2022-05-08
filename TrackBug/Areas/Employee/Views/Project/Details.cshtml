@@ -1,4 +1,4 @@
-﻿@model TrackBug.Models.ViewModels.ProjectVM
+﻿@model TrackBug.Models.ViewModels.ProjectDetailsVM
 @{
     ViewData["Title"] = String.Format("{0} Details Page", Model.Project.Title);
 }
@@ -64,256 +64,277 @@
     </div>
 </div>
 
-    <div class="row" id="openTickets">
-        @* For Project Open Tickets area managemnt*@
-        <div class="container p-3">
-            <div class="row pt-4">
-                <div class="col-6">
-                    <h2 class="text-primary">Tickets</h2>
-                </div>
-                <div class="col-6 text-end">
-                    <a asp-area="Employee" asp-controller="Ticket" asp-action="Upsert" asp-route-projectId="@Model.Project.Id" class="btn btn-primary rounded">
-                        <i class="bi bi-plus-circle"></i> &nbsp; Create New Ticket
-                    </a>
-                </div>
+<div class="row" id="openTickets">
+    @* For Project Open Tickets area managemnt*@
+    <div class="container p-3">
+        <div class="row pt-4">
+            <div class="col-6">
+                <h2 class="text-primary">Tickets</h2>
             </div>
-            <div class="row">
-                <form asp-controller="Project" asp-action="Details" method="get">
-                    <h6>
-                        Priority:
-                        <select class="mr-3" asp-for="TicketPriority" asp-items="Model.PriorityList">
-                            <option value="">All</option>
-                        </select>
-                        Status:
-                        <select class="mr-3" asp-for="TicketStatus" asp-items="Model.StatusList">
-                            <option value="">All</option>
-                        </select>
-                        Title: <input type="text" asp-for="SearchString" />
-                        <input class="btn btn-primary rounded ml-3" id="ticketFilterBtn" type="submit" value="Filter" />
-                    </h6>
-                </form>
+            <div class="col-6 text-end">
+                <a asp-area="Employee" asp-controller="Ticket" asp-action="Upsert" asp-route-projectId="@Model.Project.Id" class="btn btn-primary rounded">
+                    <i class="bi bi-plus-circle"></i> &nbsp; Create New Ticket
+                </a>
             </div>
-            
-            <table class="table table-bordered table-striped" style="width:100%">
-                <thead>
-                    <tr>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().Title)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().CreatedDateTime)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().DueDateTime)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().Priority)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().Status)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().ApplicationUser)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().ApplicationUser.EmployeeType.Title)
-                        </th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.Tickets)
+        </div>
+        <div class="row">
+            <form asp-controller="Project" asp-action="Details" method="get">
+                <h6>
+                    Priority:
+                    <select class="mr-3" asp-for="TicketPriority" asp-items="Model.PriorityList">
+                        <option value="">All</option>
+                    </select>
+                    Status:
+                    <select class="mr-3" asp-for="TicketStatus" asp-items="Model.StatusList">
+                        <option value="">All</option>
+                    </select>
+                    Title: <input type="text" asp-for="SearchString" />
+                    <input class="btn btn-primary rounded ml-3" id="ticketFilterBtn" type="submit" value="Filter" />
+                </h6>
+            </form>
+        </div>
+
+        <table class="table table-bordered table-striped" style="width:100%">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().Title)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().CreatedDateTime)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().DueDateTime)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().Priority)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().Status)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().ApplicationUser)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().ApplicationUser.EmployeeType.Title)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Tickets)
+                {
+                    @if (item.Status.Title != "Closed")
                     {
-                        @if (item.Status.Title != "Closed")
-                        {
-                            <tr class="table-secondary">
-                                <td>
-                                    <a asp-area="Employee" asp-controller="Ticket" asp-action="Details" asp-route-id="@item.Id" asp-route-projectId="@Model.Project.Id">@Html.DisplayFor(modelItem => item.Title)</a>
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.CreatedDateTimeAsString)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.DueDateTimeAsString)
-                                </td>
-                                <td>
-                                    <span class="badge @item.Priority.BadgeColor text-uppercase">
-                                        @Html.DisplayFor(modelItem => item.Priority.Title)
-                                    </span>
-                                </td>
-                                <td>
-                                    <span class="badge bg-secondary text-uppercase">
-                                        @Html.DisplayFor(modelItem => item.Status.Title)
-                                    </span>
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.ApplicationUser.Name)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.ApplicationUser.EmployeeType.Title)
-                                </td>
-                                <td class="text-end">
+                        <tr class="table-secondary">
+                            <td>
+                                <a asp-area="Employee" asp-controller="Ticket" asp-action="Details" asp-route-id="@item.Id" asp-route-projectId="@Model.Project.Id">@Html.DisplayFor(modelItem => item.Title)</a>
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CreatedDateTimeAsString)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DueDateTimeAsString)
+                            </td>
+                            <td>
+                                <span class="badge @item.Priority.BadgeColor text-uppercase">
+                                    @Html.DisplayFor(modelItem => item.Priority.Title)
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-secondary text-uppercase">
+                                    @Html.DisplayFor(modelItem => item.Status.Title)
+                                </span>
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ApplicationUser.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ApplicationUser.EmployeeType.Title)
+                            </td>
+                            @if (Model.UserCanAdministerProject)
+                            {
+                                <td class="text-end" style='width: 125px;'>
                                     <a class="btn btn-primary rounded" asp-area="Employee" asp-controller="Ticket" asp-action="Upsert" asp-route-id="@item.Id" asp-route-projectId="@Model.Project.Id"><i class="bi bi-pen"></i> </a> |
                                     <a class="btn btn-danger rounded" asp-area="Employee" asp-controller="Ticket" asp-action="Delete" asp-route-id="@item.Id"><i class="bi bi-x-circle"></i> </a>
                                 </td>
-                            </tr>
-                        }
-                    }
-                </tbody>
-            </table>
+                            }
+                            else
+                            {
+                                <td class="text-end" style='width: 75px;'>
+                                    <a class="btn btn-primary rounded" asp-area="Employee" asp-controller="Ticket" asp-action="Upsert" asp-route-id="@item.Id" asp-route-projectId="@Model.Project.Id"><i class="bi bi-pen"></i> </a>
+                                </td>
+                            }
 
-        </div>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
     </div>
-    <div class="row">
-        @* For Project Closed Tickets area managemnt*@
-        <div class="container p-3">
-            <div class="row pt-4">
-                <div class="col-6">
-                    <h2 class="text-primary">Closed tickets</h2>
-                </div>
+</div>
+<div class="row">
+    @* For Project Closed Tickets area managemnt*@
+    <div class="container p-3">
+        <div class="row pt-4">
+            <div class="col-6">
+                <h2 class="text-primary">Closed tickets</h2>
+            </div>
+        </div>
+        <table class="table table-bordered table-striped" style="width:100%">
+            <thead>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().Title)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().CreatedDateTime)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().DueDateTime)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().Priority)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().Status)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().ApplicationUser)
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Tickets)
+                {
+                    @if (item.Status.Title == "Closed")
+                    {
+                        <tr class="table-secondary">
+                            <td>
+                                <a asp-area="Employee" asp-controller="Ticket" asp-action="Details" asp-route-id="@item.Id" asp-route-projectId="@Model.Project.Id">@Html.DisplayFor(modelItem => item.Title)</a>
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CreatedDateTimeAsString)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DueDateTimeAsString)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Priority.Title)
+
+                                @*<span class="badge badge-success text-uppercase">
+                                        @Html.DisplayFor(modelItem => item.Priority.Title)
+                                    </span>*@
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Status.Title)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ApplicationUser.Name)
+                            </td>
+                            @if (Model.UserCanAdministerProject)
+                            {
+                                <td class="text-end" style='width: 125px;'>
+                                    <a class="btn btn-primary rounded" asp-area="Employee" asp-controller="Ticket" asp-action="Upsert" asp-route-id="@item.Id" asp-route-projectId="@Model.Project.Id"><i class="bi bi-pen"></i> </a> |
+                                    <a class="btn btn-danger rounded" asp-area="Employee" asp-controller="Ticket" asp-action="Delete" asp-route-id="@item.Id"><i class="bi bi-x-circle"></i> </a>
+                                </td>
+                            }
+                            else
+                            {
+                                <td class="text-end" style='width: 75px;'>
+                                    <a class="btn btn-primary rounded" asp-area="Employee" asp-controller="Ticket" asp-action="Upsert" asp-route-id="@item.Id" asp-route-projectId="@Model.Project.Id"><i class="bi bi-pen"></i> </a>
+                                </td>
+                            }
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<div class="row">
+    <!--<div class="col-md-7 pt-4">-->
+    @* For Project Members area managemnt*@
+    <div class="container p-3">
+        <div class="row pt-4">
+            <div class="col-6">
+                <h2 class="text-primary">Project's Members Area</h2>
+            </div>
+            <div class="col-6 text-end">
+                <a class="btn btn-primary rounded" asp-area="Employee" asp-controller="ProjectMember" asp-action="AddMember" asp-route-projectId="@Model.Project.Id"><i class="bi bi-plus-circle"></i> &nbsp; Add Member</a>
             </div>
             <table class="table table-bordered table-striped" style="width:100%">
                 <thead>
                     <tr>
                         <th>
-                            @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().Title)
+                            @Html.DisplayNameFor(model => model.ProjectMembers.FirstOrDefault().ApplicationUser.Name)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().CreatedDateTime)
+                            @Html.DisplayNameFor(model => model.ProjectMembers.FirstOrDefault().ApplicationUser.Email)
                         </th>
                         <th>
-                            @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().DueDateTime)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().Priority)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().Status)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Tickets.FirstOrDefault().ApplicationUser)
+                            @Html.DisplayNameFor(model => model.ProjectMembers.FirstOrDefault().ApplicationUser.EmployeeType.Title)
                         </th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model.Tickets)
+                    @foreach (var item in Model.ProjectMembers)
                     {
-                        @if (item.Status.Title == "Closed")
-                        {
-                            <tr class="table-secondary">
-                                <td>
-                                    <a asp-area="Employee" asp-controller="Ticket" asp-action="Details" asp-route-id="@item.Id" asp-route-projectId="@Model.Project.Id">@Html.DisplayFor(modelItem => item.Title)</a>
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.CreatedDateTimeAsString)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.DueDateTimeAsString)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Priority.Title)
-
-                                    @*<span class="badge badge-success text-uppercase">
-                                            @Html.DisplayFor(modelItem => item.Priority.Title)
-                                        </span>*@
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.Status.Title)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.ApplicationUser.Name)
-                                </td>
+                        <tr class="table-secondary">
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ApplicationUser.Name)
+                                @*<a asp-area="Employee" asp-controller="ProjectMember" asp-action="Details" asp-route-id="@item.Id" asp-route-projectId="@Model.Project.Id" >@Html.DisplayFor(modelItem => item.ApplicationUser.Name)</a>*@
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ApplicationUser.Email)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ApplicationUser.EmployeeType.Title)
+                            </td>
+                            @if (Model.UserCanAdministerProject)
+                            {
                                 <td class="text-end">
-                                    <a class="btn btn-primary rounded" asp-area="Employee" asp-controller="Ticket" asp-action="Upsert" asp-route-id="@item.Id" asp-route-projectId="@Model.Project.Id"><i class="bi bi-pen"></i> </a>
-                                    <a class="btn btn-danger rounded" asp-area="Employee" asp-controller="Ticket" asp-action="Delete" asp-route-id="@item.Id"><i class="bi bi-x-circle"></i> </a>
+                                <a onclick="ConfirmDeleteProjectMember(@item.Id)"
+                                   class="btn btn-danger rounded mx-2 text-light"> <i class="bi bi-trash-fill"></i> Delete</a>
                                 </td>
-                            </tr>
-                        }
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
-    <div class="row">
-        <!--<div class="col-md-7 pt-4">-->
-        @* For Project Members area managemnt*@
-        <div class="container p-3">
-            <div class="row pt-4">
-                <div class="col-6">
-                    <h2 class="text-primary">Project's Members Area</h2>
-                </div>
-                <div class="col-6 text-end">
-                    <a class="btn btn-primary rounded" asp-area="Employee" asp-controller="ProjectMember" asp-action="AddMember" asp-route-projectId="@Model.Project.Id"><i class="bi bi-plus-circle"></i> &nbsp; Add Member</a>
-                    @*<a class="btn btn-primary text-light" onclick="AddProjectMember(@Model.Project.Id)"><i class="bi bi-plus-circle"></i> &nbsp; Add Member</a>
-                        <div class="modal fade" id="projectMemberAddModal">
+                            }
+                            
+                            @*Modal pop for Project Member deletion*@
+                            <div class="modal fade" id="projectMemberDeleteModal">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
 
-                        </div>*@
-                </div>
-                <table class="table table-bordered table-striped" style="width:100%">
-                    <thead>
-                        <tr>
-                            <th>
-                                @Html.DisplayNameFor(model => model.ProjectMembers.FirstOrDefault().ApplicationUser.Name)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.ProjectMembers.FirstOrDefault().ApplicationUser.Email)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.ProjectMembers.FirstOrDefault().ApplicationUser.EmployeeType.Title)
-                            </th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model.ProjectMembers)
-                        {
-                            <tr class="table-secondary">
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.ApplicationUser.Name)
-                                    @*<a asp-area="Employee" asp-controller="ProjectMember" asp-action="Details" asp-route-id="@item.Id" asp-route-projectId="@Model.Project.Id" >@Html.DisplayFor(modelItem => item.ApplicationUser.Name)</a>*@
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.ApplicationUser.Email)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.ApplicationUser.EmployeeType.Title)
-                                </td>
-                                <td class="text-end">
-                                    <a onclick="ConfirmDeleteProjectMember(@item.Id)"
-                                       class="btn btn-danger rounded mx-2 text-light"> <i class="bi bi-trash-fill"></i> Delete</a>
-                                </td>
-                                @*Modal pop for Project Member deletion*@
-                                <div class="modal fade" id="projectMemberDeleteModal">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-
-                                                <h3 class="modal-title">Delete Project Member:</h3>
-                                                <a class="close" onclick="CancelDelete()" data-dismiss="modal">&times;</a>
-                                            </div>
-                                            <div class="modal-body">
-                                                <h4>Are you sure you want to delete member from the project?</h4>
-                                                <input type="hidden" id="hiddenProjectMemberIdField" />
-                                            </div>
-                                            <div class="modal-footer">
-                                                <a href="#" class="btn btn-default rounded" onclick="CancelDelete()" data-dismiss="modal">Cancel</a>
-                                                <a href="#" class="btn btn-danger rounded" onclick="DeleteProjectMember()">Confirm</a>
-                                            </div>
-
+                                            <h3 class="modal-title">Delete Project Member:</h3>
+                                            <a class="close" onclick="CancelDelete()" data-dismiss="modal">&times;</a>
+                                        </div>
+                                        <div class="modal-body">
+                                            <h4>Are you sure you want to delete member from the project?</h4>
+                                            <input type="hidden" id="hiddenProjectMemberIdField" />
+                                        </div>
+                                        <div class="modal-footer">
+                                            <a href="#" class="btn btn-default rounded" onclick="CancelDelete()" data-dismiss="modal">Cancel</a>
+                                            <a href="#" class="btn btn-danger rounded" onclick="DeleteProjectMember()">Confirm</a>
                                         </div>
 
                                     </div>
 
                                 </div>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
 
-            </div>
+                            </div>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
         </div>
     </div>
+</div>
+@if (Model.UserCanAdministerProject)
+{
     <div class="row">
         <div class="container p-3">
             <div class="row pt-4">
@@ -350,84 +371,81 @@
             </div>
         </div>
     </div>
+}
 
-    @section scripts{
-        <script>
-    @*$(document).ready(function () {
-        $("#ticketFilterBtn").click(GoToOpenTickets());*@
-    var ConfirmDeleteProjectMember = function (id) {
+@section scripts{
+    <script>var ConfirmDeleteProjectMember = function (id) {
 
-        $("#hiddenProjectMemberIdField").val(id);
-        $("#projectMemberDeleteModal").modal('show');
+            $("#hiddenProjectMemberIdField").val(id);
+            $("#projectMemberDeleteModal").modal('show');
 
-    }
+        }
 
-    var DeleteProjectMember = function () {
-        var projectMemberId = $("#hiddenProjectMemberIdField").val();
-        $.ajax({
-            type: 'DELETE',
-            url: "/Employee/ProjectMember/Delete/",
-            data: { id: projectMemberId },
-            success: function (data) {
-                if (data.success) {
-                    toastr.success(data.message);
-                    $("#projectMemberDeleteModal").modal("hide");
-                    document.location.reload(true);
+        var DeleteProjectMember = function () {
+            var projectMemberId = $("#hiddenProjectMemberIdField").val();
+            $.ajax({
+                type: 'DELETE',
+                url: "/Employee/ProjectMember/Delete/",
+                data: { id: projectMemberId },
+                success: function (data) {
+                    if (data.success) {
+                        toastr.success(data.message);
+                        $("#projectMemberDeleteModal").modal("hide");
+                        document.location.reload(true);
+                    }
+                    else {
+                        toastr.error(data.message);
+                        $("#projectMemberDeleteModal").modal("hide");
+                    }
                 }
-                else {
-                    toastr.error(data.message);
-                    $("#projectMemberDeleteModal").modal("hide");
+            })
+        }
+        var CancelDelete = function () {
+            $("#projectMemberDeleteModal").modal("hide");
+            $("#projectDeleteModal").modal("hide");
+
+        }
+        var ConfirmDeleteProject = function (id) {
+            $("#hiddenProjectIdField").val(id);
+            $("#projectDeleteModal").modal('show');
+        }
+        var DeleteProject = function () {
+            var projectId = $("#hiddenProjectIdField").val();
+            $.ajax({
+                type: 'DELETE',
+                url: "/Employee/Project/Delete/",
+                data: { id: projectId },
+                success: function (data) {
+                    if (data.success) {
+                        toastr.success(data.message);
+                        $("#projectDeleteModal").modal("hide");
+                        location.replace('/Employee/Project/Index');
+                    }
+                    else {
+                        toastr.error(data.message);
+                        $("#projectMemberDeleteModal").modal("hide");
+                    }
                 }
-            }
-        })
-    }
-    var CancelDelete = function () {
-        $("#projectMemberDeleteModal").modal("hide");
-        $("#projectDeleteModal").modal("hide");
-
-    }
-    var ConfirmDeleteProject = function (id) {
-        $("#hiddenProjectIdField").val(id);
-        $("#projectDeleteModal").modal('show');
-    }
-    var DeleteProject = function () {
-        var projectId = $("#hiddenProjectIdField").val();
-        $.ajax({
-            type: 'DELETE',
-            url: "/Employee/Project/Delete/",
-            data: { id: projectId },
-            success: function (data) {
-                if (data.success) {
-                    toastr.success(data.message);
-                    $("#projectDeleteModal").modal("hide");
-                    location.replace('/Employee/Project/Index');
+            })
+        }
+        var AddProjectMember = function (projectId) {
+            $.ajax({
+                type: "GET",
+                url: "Employee/ProjectMember/AddMember?projectId=" + projectId,
+                dataType: "html",
+                success: function (evt) {
+                    $('#projectMemberAddModal').html(evt);
+                },
+                error: function (req, status, error) {
+                    alert("Error!Occured");
                 }
-                else {
-                    toastr.error(data.message);
-                    $("#projectMemberDeleteModal").modal("hide");
-                }
-            }
-        })
-    }
-    var AddProjectMember = function (projectId) {
-        $.ajax({
-            type: "GET",
-            url: "Employee/ProjectMember/AddMember?projectId=" + projectId,
-            dataType: "html",
-            success: function (evt) {
-                $('#projectMemberAddModal').html(evt);
-            },
-            error: function (req, status, error) {
-                alert("Error!Occured");
-            }
-        });
+            });
 
 
-    }
-    var GoToOpenTickets = function (reload) {
-        window.location.hash = '#openTickets';
-        window.location.reload(true);
-    }
-        </script>
+        }
+        var GoToOpenTickets = function (reload) {
+            window.location.hash = '#openTickets';
+            window.location.reload(true);
+        }</script>
 
-    }
+}

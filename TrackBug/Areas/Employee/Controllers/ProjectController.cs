@@ -28,22 +28,29 @@ namespace TrackBug.Areas.Employee.Controllers
         {
             var claimsIdentity = (ClaimsIdentity)User.Identity;
             var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
-            List<ProjectCardVM> userProjectCards = new();
-            IEnumerable<Project> curUserProjectList = await _unitOfWork.Project.GetAllAsync(u => u.ApplicationUserId == claim.Value, includeProperties: "ApplicationUser");
-            foreach(var project in curUserProjectList)
+           
+            //getting projects where current user is a member
+            IEnumerable<ProjectMember> userProjectMemberList = _unitOfWork.ProjectMember.GetAll(u => u.ApplicationUserId == claim.Value);
+            List<Project> userIsParticipantProjects = new();
+            foreach (var projectMember in userProjectMemberList)
             {
-                int numMembers = _unitOfWork.ProjectMember.GetAll(u=>u.ProjectId==project.Id).Count();
-
-                
-                int numOpenTickets = _unitOfWork.Ticket.GetAll(u => u.ProjectId == project.Id && u.Status.Title=="Open").Count();
-                userProjectCards.Add(new()
+                Project project = _unitOfWork.Project.GetFirstOrDefault(u => u.Id == projectMember.ProjectId);
+                userIsParticipantProjects.Add(project);
+            }
+            List<ProjectCardVM> userIsParticipantProjectCards = new();
+            foreach (var project in userIsParticipantProjects)
+            {
+                int numMembers = _unitOfWork.ProjectMember.GetAll(u => u.ProjectId == project.Id).Count();
+                int numOpenTickets = _unitOfWork.Ticket.GetAll(u => u.ProjectId == project.Id && u.Status.Title == "Open").Count();
+                userIsParticipantProjectCards.Add(new()
                 {
                     Project = project,
                     NumMembers = numMembers,
                     NumOpenTickets = numOpenTickets
                 });
             }
-            return View(userProjectCards);
+
+            return View(userIsParticipantProjectCards);
         }
 
         public IActionResult Upsert(int? id)
@@ -106,6 +113,9 @@ namespace TrackBug.Areas.Employee.Controllers
        
         public async Task<IActionResult> Details(int? id, string searchString, int? ticketPriority, int? ticketStatus)
         {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var claim = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+
             //get tickets of the current project
             var tickets = _unitOfWork.Ticket.GetAll(u => u.ProjectId == id, includeProperties: "Project,Priority,Status,ApplicationUser");
             //apply search
@@ -124,7 +134,7 @@ namespace TrackBug.Areas.Employee.Controllers
                 tickets = tickets.Where(u => u.Status.Id == ticketStatus);
             }
 
-            ProjectVM projectVM = new()
+            ProjectDetailsVM projectDetailsVM = new()
             {
                 Project = await _unitOfWork.Project.GetFirstOrDefaultAsync(u => u.Id == id, includeProperties: "ApplicationUser"),
                 ProjectMembers = await _unitOfWork.ProjectMember.GetAllAsync(u => u.ProjectId == id, includeProperties: "Project,ApplicationUser"),
@@ -144,21 +154,30 @@ namespace TrackBug.Areas.Employee.Controllers
 
             };
 
-            projectVM.Project.CreatedDateTimeAsString = projectVM.Project.CreatedDateTime.ToString("ddd, dd MMM yyyy, HH:mm tt");
+            projectDetailsVM.Project.CreatedDateTimeAsString = projectDetailsVM.Project.CreatedDateTime.ToString("ddd, dd MMM yyyy, HH:mm tt");
 
-            foreach (var ticket in projectVM.Tickets)
+            foreach (var ticket in projectDetailsVM.Tickets)
             {
                 ticket.CreatedDateTimeAsString = ticket.CreatedDateTime.ToString("ddd, dd MMM yyyy, HH:mm tt");
                 ticket.DueDateTimeAsString = ticket.DueDateTime.ToString("ddd, dd MMM yyyy, HH:mm tt");
                 ticket.ApplicationUser = _unitOfWork.ApplicationUser.GetFirstOrDefault(u => u.Id == ticket.ApplicationUser.Id, includeProperties: "EmployeeType");
             }
 
-            foreach (var member in projectVM.ProjectMembers)
+            foreach (var member in projectDetailsVM.ProjectMembers)
             {
                 member.ApplicationUser = _unitOfWork.ApplicationUser.GetFirstOrDefault(u => u.Id == member.ApplicationUserId, includeProperties: "EmployeeType");
             }
 
-            return View(projectVM);
+            if(projectDetailsVM.Project.ApplicationUserId == claim.Value)
+            {
+                projectDetailsVM.UserCanAdministerProject = true;
+            }
+            else
+            {
+                projectDetailsVM.UserCanAdministerProject = false;
+            }
+
+            return View(projectDetailsVM);
         }
 
         #region API CALLS
